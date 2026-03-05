@@ -6,7 +6,7 @@ CREATE TABLE treno (
 );
 
 CREATE TABLE tratta (
-    id_tratta INT PRIMARY KEY NOT NULL, 
+    id_tratta INT PRIMARY KEY AUTO_INCREMENT NOT NULL , 
     stazione_partenza VARCHAR(30) NOT NULL,
     stazione_arrivo VARCHAR(30) NOT NULL,
     distanza INT NOT NULL
