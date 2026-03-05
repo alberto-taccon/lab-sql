@@ -13,7 +13,7 @@ CREATE TABLE tratta (
 );
 
 CREATE TABLE corsa (
-    id INT PRIMARY KEY NOT NULL, 
+    id_corsa INT PRIMARY KEY NOT NULL, 
     id_treno VARCHAR(6) NOT NULL,
     id_tratta INT NOT NULL,
     FOREIGN KEY (id_treno) REFERENCES treno(id_treno),
