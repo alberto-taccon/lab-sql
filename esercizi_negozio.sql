@@ -22,24 +22,56 @@ select * from 4CTL_clienti order by cognome, nome;
 select * from 4CTL_ordini where data_ordine like '2024-06%'
 --11. Elenco dei codici seriali in magazzino associati al nome del relativo
 modello.
-select cod_seriale, nome from 4CTL_prodotti, 4CTL_modelli_prodotto
+select cod_seriale, nome 
+  from 4CTL_prodotti, 4CTL_modelli_prodotto
 --12. Ricostruzione dello scontrino: ID ordine, cognome cliente, nome
 modello e seriale venduto.
+SELECT 4CTL_ordini.id_ordine, 4CTL_clienti.cognome, 4CTL_modelli_prodotto.nome, 4CTL_prodotti.cod_seriale 
+  from 4CTL_prodotti, 4CTL_ordini, 4CTL_modelli_prodotto, 4CTL_dettagli_ordine, 4CTL_clienti 
+  where 1=1 AND 4CTL_ordini.id_ordine=4CTL_dettagli_ordine.id_ordine 
+  AND 4CTL_dettagli_ordine.id_prodotto=4CTL_prodotti.id_prodotto 
+  AND 4CTL_prodotti.id_modello=4CTL_modelli_prodotto.id_modello 
+  AND 4CTL_clienti.id_cliente=4CTL_ordini.id_cliente
+  
 --13. Visualizzazione dello stato della garanzia per ogni codice seriale
 venduto.
+SELECT stato_garanzia, 4CTL_prodotti.cod_seriale 
+  from 4CTL_garanzie, 4CTL_prodotti 
+  where 4CTL_garanzie.id_prodotto=4CTL_prodotti.id_prodotto;
+
 --14 Conteggio dei pezzi fisici disponibili in magazzino per ogni categoria di
 prodotto.
+select 4CTL_modelli_prodotto.categoria, COUNT(4CTL_prodotti.id_prodotto) AS disponibilita 
+  from 4CTL_modelli_prodotto, 4CTL_prodotti 
+  where 4CTL_prodotti.id_modello=4CTL_modelli_prodotto.id_modello 
+  AND 4CTL_prodotti.disponibilita='S' 
+  GROUP BY 4CTL_modelli_prodotto.categoria
+  
 --15 Calcolo del totale incassato per ogni cliente basato sulla somma degli
 ordini effettuati.
+SELECT cognome, SUM(prezzo_vendita_effettivo), id_prodotto 
+  FROM 4CTL_dettagli_ordine, 4CTL_clienti, 4CTL_ordini 
+  WHERE 4CTL_dettagli_ordine.id_ordine=4CTL_ordini.id_ordine 
+  AND 4CTL_ordini.id_cliente=4CTL_clienti.id_cliente 
+  GROUP BY 4CTL_clienti.cognome
+  
 --16 Determinazione del prezzo medio di listino per ogni categoria di
 prodotto a catalogo.
---17 Identificazione del numero di prodotti venduti per ogni tipologia di
+SELECT 4CTL_modelli_prodotto.categoria, AVG(4CTL_modelli_prodotto.prezzo_listino) 
+  FROM 4CTL_modelli_prodotto 
+  GROUP BY 4CTL_modelli_prodotto.categoria
+  --17 Identificazione del numero di prodotti venduti per ogni tipologia di
 garanzia (attiva, scaduta, in assistenza).
+  
 --18. Elenco dei clienti che hanno effettuato una spesa complessiva
 superiore a 2000€.
+  
 --19. Identificazione delle categorie che hanno più di 50 prodotti registrati a
 catalogo.
 --20. Visualizzazione degli ordini il cui prezzo totale è superiore alla media di
 tutti gli ordini.
 --21. Elenco dei modelli che non sono mai stati venduti (assenti nella
 tabella dettagli_ordine).
+
+
+SELECT 4CTL_clienti.id_cliente, cognome, nome, SUM(prezzo_vendita_effettivo), id_prodotto FROM 4CTL_dettagli_ordine, 4CTL_clienti, 4CTL_ordini WHERE 4CTL_dettagli_ordine.id_ordine=4CTL_ordini.id_ordine AND 4CTL_ordini.id_cliente=4CTL_clienti.id_cliente GROUP BY 4CTL_clienti.id_cliente
